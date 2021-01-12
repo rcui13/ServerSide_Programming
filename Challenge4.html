@@ -17,9 +17,20 @@
         <input type="text" id="pass"><br><br>
         <input type="submit" value="Submit">
     </form>
+    <p></p>
 <script>
     $("#login").submit(function(){
-
+        console.log("submit");
+        $.ajax({
+            url: '/login',
+            type: 'get',
+            data: {Username: Username, Password: Password},
+            async: false,
+            success: function(resp){
+                console.log("success");
+                $(".p").innerHTML("Welcome!")
+            }
+        })
     });
 </script>
 </body>

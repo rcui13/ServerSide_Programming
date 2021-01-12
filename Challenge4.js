@@ -4,9 +4,8 @@ var mysql = require("mysql");
 
 
     console.log("hi");
-    http.createServer(function (req, res) {
+    http.get("/login",function (req, res) {
 
-        if (req.url === "/login") {
             var con = mysql.createConnection({
                 host: "10.11.90.16",
                 port: "3306",
@@ -18,11 +17,16 @@ var mysql = require("mysql");
             con.connect(function (err) {
                 if (err) throw err;
                 console.log(req);
-
+                let data = "SELECT * FROM Study.RCui_Challenge4 WHERE Username = ? AND Password = ?";
+                con.query(data, [req[0]], [req[1]], function (err, results){
+                    if (err) {
+                        console.log(err);
+                        res.json({"error": true, "message": "An unexpected error occurred !"});
+                    }
+                    else{
+                        res.json({"error": false,  "data": results});
+                    }
+                })
             })
-        } else {
-            res.statusCode = 404;
-            res.end('404: File Not Found');
-        }
-    }).listen(3008);
+    });
 
