@@ -7,6 +7,11 @@ app.use(express.urlencoded());
 app.use(express.json());
 const port = 3008;
 
+const host = "localhost";
+// const host = "10.11.90.16";
+// const host = '127.0.0.1';
+
+
 // app.use(bodyParser.urlencoded({ extended: true }));
 //Challenge 1
 app.get('/', function(req, res){
@@ -23,15 +28,17 @@ app.get('/abc', function(req, res){
 //Challenge 3
 app.get('/count', (req, res) => {
     const con = mysql.createConnection({
-            host: "10.11.90.16",
+            host: host,
             port: "3306",
             user: "study",
             password: "Study1111%",
             Schema: "Study",
             Table: "Country"
         })
+
     con.connect(function(err){
             if (err) throw err;
+            console.log("connected")
             res.writeHead(200, {'Content-Type': "text/html"});
             con.query("Select COUNT(Country) as 'count' FROM Study.Country Where Continent_name ='Asia';", function(err, result){
                 if (err) throw err;
@@ -45,7 +52,7 @@ app.get('/count', (req, res) => {
 //Challenge 4
 app.post('/challenge4', (req, res) => {
     const con = mysql.createConnection({
-        host: "10.11.90.16",
+        host: host,
         port: "3306",
         user: "study",
         password: "Study1111%",
@@ -71,8 +78,34 @@ app.post('/challenge4', (req, res) => {
 
 })
 
+// Challenge 5
+app.get('/challenge5',(req, res) => {
+    const con = mysql.createConnection({
+        host: host,
+        port: "3306",
+        user: "study",
+        password: "Study1111%",
+        Schema: "Study",
+        Table: "RCui_Challenge5"
+    })
+    con.connect(function (err) {
+        if (err) throw err;
+        let data = "SELECT Name FROM Study.RCui_Challenge5 WHERE Color=?;"
+        con.query(data, req.body.color, function (err, results) {
+            if (err) {
+                console.log(err);
+                res.json({"error": true, "message": "An unexpected error occurred !"});
+            } else {
+                res.json({"error": false, "data": results});
+
+            }
+        })
+    })
+})
+
+
 app.listen(port, () => {
-    console.log("Example app listening on port ${port}!")
+    console.log("Example app listening on port " + port + "!")
 });
 // const http = require('http');
 // const fs = require('fs');
