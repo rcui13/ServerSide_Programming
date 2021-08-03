@@ -7,7 +7,6 @@
 <!--    <script src="Challenge5.js" type="text/javascript"></script>-->
 <!--    <script data-main="Challenge5" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.17/require.min.js"></script>-->
 
-
 </head>
 <body>
     <h1> Magic the Gathering Modern Staples</h1>
@@ -20,22 +19,58 @@
                 <option value="Red">Red</option>
                 <option value="Green">Green</option>
             </select>
-
     </div>
+    <br>
+    <div class="dropdown">
+        <select id="dropdownSelect" class="dropdown-content" onchange="cardChange()">
+            <option>[Select a Card]</option>
+        </select>
+    </div>
+    <br>
+    <image id="image">
+
+    </image>
 </body>
 <script>
 
     function colorChange() {
         let wubrg = $("#dropdownItems").val();
+
         console.log(wubrg)
+
+        $("#image").attr("src", "")
+        $("#dropdownSelect").empty();
         $.ajax({
-            url:'/challenge5',
-            type: 'GET',
+            url:'http://localhost:3008/challenge5_name',
+            type: 'POST',
             data: {color: wubrg},
             dataType: 'json',
             async: false,
             success: function (resp) {
+                console.log(resp.data)
+
+                $("#dropdownSelect").append('<option>[Select a Card]</option>');
+                resp.data.forEach(function(ele, i){
+                    $("#dropdownSelect").append('<option  value="'+ ele.Name +'" >' + ele.Name + '</option>');
+                })
+
+
+            }
+        })
+    }
+
+    function cardChange() {
+        let cardName = $("#dropdownSelect").val()
+        $.ajax({
+            url:'http://localhost:3008/challenge5_img',
+            type: 'POST',
+            data: {Name: cardName},
+            dataType: 'json',
+            async: false,
+            success: function (resp) {
                 console.log(resp)
+
+                $("#image").attr("src", resp.data[0].ImageURL);
 
             }
         })

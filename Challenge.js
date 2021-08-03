@@ -84,7 +84,7 @@ app.post('/challenge4', (req, res) => {
 })
 
 // Challenge 5
-app.get('/challenge5',(req, res) => {
+app.post('/challenge5_name',(req, res) => {
     const con = mysql.createConnection({
         host: host,
         port: "3306",
@@ -95,7 +95,8 @@ app.get('/challenge5',(req, res) => {
     })
     con.connect(function (err) {
         if (err) throw err;
-        let data = "SELECT Name FROM Study.RCui_Challenge5 WHERE Color=?;"
+        let data = "SELECT Name FROM Study.RCui_Challenge5 WHERE Color=?;";
+        console.log(res.body)
         con.query(data, req.body.color, function (err, results) {
             if (err) {
                 console.log(err);
@@ -108,7 +109,30 @@ app.get('/challenge5',(req, res) => {
     })
 })
 
+app.post('/challenge5_img',(req, res) => {
+    const con = mysql.createConnection({
+        host: host,
+        port: "3306",
+        user: user,
+        password: password,
+        Schema: "Study",
+        Table: "RCui_Challenge5"
+    })
+    con.connect(function (err) {
+        if (err) throw err;
+        let data = "SELECT ImageURL FROM Study.RCui_Challenge5 WHERE Name=?;";
 
+        con.query(data, req.body.Name, function (err, results) {
+            if (err) {
+                console.log(err);
+                res.json({"error": true, "message": "An unexpected error occurred !"});
+            } else {
+                res.json({"error": false, "data": results});
+                console.log(results)
+            }
+        })
+    })
+})
 app.listen(port, () => {
     console.log("Example app listening on port " + port + "!")
 });
