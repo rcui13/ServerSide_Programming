@@ -11,6 +11,11 @@ const host = "localhost";
 // const host = "10.11.90.16";
 // const host = '127.0.0.1';
 
+const user = "root";
+// const user = "study";
+
+const password = "zygomorphic";
+// const password = "Study1111%";
 
 // app.use(bodyParser.urlencoded({ extended: true }));
 //Challenge 1
@@ -30,8 +35,8 @@ app.get('/count', (req, res) => {
     const con = mysql.createConnection({
             host: host,
             port: "3306",
-            user: "study",
-            password: "Study1111%",
+            user: user,
+            password: password,
             Schema: "Study",
             Table: "Country"
         })
@@ -54,8 +59,8 @@ app.post('/challenge4', (req, res) => {
     const con = mysql.createConnection({
         host: host,
         port: "3306",
-        user: "study",
-        password: "Study1111%",
+        user: user,
+        password: password,
         Schema: "Study",
         Table: "RCui_Challenge4"
     })
@@ -83,8 +88,8 @@ app.get('/challenge5',(req, res) => {
     const con = mysql.createConnection({
         host: host,
         port: "3306",
-        user: "study",
-        password: "Study1111%",
+        user: user,
+        password: password,
         Schema: "Study",
         Table: "RCui_Challenge5"
     })
