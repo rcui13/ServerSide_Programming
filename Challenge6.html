@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Challenge 6</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+
+</head>
+<body>
+    <h1>Rock Bands</h1>
+    <h2>Country</h2>
+    <div class="dropdown">
+        <select class="dropdown-content" id="Country">
+            <option>[Select a Country]</option>
+            <option value="United States">United States</option>
+            <option value="United Kingdom">United Kingdom</option>
+        </select>
+    </div>
+    <br>
+    <h2>Year Formed</h2>
+    <div class="dropdown">
+        <select class="dropdown-content" id="range">
+            <option>[Select a Range]</option>
+            <option value="1960">1960s</option>
+            <option value="1970">1970s</option>
+            <option value="1980">1980s</option>
+        </select>
+    </div>
+    <br>
+    <h2>Genre</h2>
+    <div class="dropdown">
+        <select class="dropdown-content" id="genre">
+            <option>[Select a Genre]</option>
+            <option value="Blues">Blues Rock</option>
+            <option value="Folk">Folk Rock</option>
+            <option value="Hard">Hard Rock</option>
+            <option value="Heavy Metal">Heavy Metal</option>
+            <option value="Pop">Pop Rock</option>
+            <option value="Progressive">Progressive Rock</option>
+            <option value="Psychedelic">Psychedelic Rock</option>
+            <option value="Southern">Southern Rock</option>
+        </select>
+    </div>
+    <br>
+    <button type="button" onclick="getData()">Submit</button>
+    <br><br>
+    <table id="table_id" class="display" style="display:none">
+        <thead>
+        <tr id="columns">
+            <th>Band</th>
+            <th>Country</th>
+            <th>Year Formed</th>
+            <th>Genres</th>
+            <th>Favorite Song</th>
+        </tr>
+        </thead>
+        <tbody id="data">
+<!--        <tr>-->
+<!--            <td>Row 1 Data 1</td>-->
+<!--            <td>Row 1 Data 2</td>-->
+<!--        </tr>-->
+<!--        <tr>-->
+<!--            <td>Row 2 Data 1</td>-->
+<!--            <td>Row 2 Data 2</td>-->
+<!--        </tr>-->
+        </tbody>
+    </table>
+
+</body>
+<script>
+    // $(document).ready( function () {
+    //     $('#table_id').DataTable();
+    // } );
+
+    function getData() {
+        let country = $("#Country").val(),
+            year = $("#range").val(),
+            genre = '%' + $("#genre").val() + '%';
+
+        let input = [country, year, genre]
+        console.log(input)
+        input.forEach(function (ele, i) {
+            if (ele.includes("[")) {
+                input[i] = null;
+            }
+        })
+
+        console.log(input)
+        let data = {country: input[0], yearStart: parseInt(input[1]), yearEnd: parseInt(input[1]) + 9, genre: input[2]};
+        console.log(data)
+        $.ajax({
+            url: 'http://localhost:3008/challenge6',
+            type: 'POST',
+            data: data,
+            dataType: 'json',
+            async: false,
+            success: function (resp) {
+                console.log(resp.data)
+
+                // Object.keys(resp.data[0]).forEach(function(ele, i) {
+                //     $("#columns").append("<th>" + ele + "</th>")
+                // })
+                let tbody = document.getElementById("data");
+                resp.data.forEach( function() {
+                    tbody.append('<tr></tr>')
+                })
+                tbody.childNodes.forEach( function (ele, i) {
+                    resp.data[i].forEach(function (elem, j) {
+                        this.append('<th>' + resp.data[j] + '</th>')
+                    })
+                })
+
+
+
+                $('#table_id')
+                    .show()
+                    .DataTable();
+
+            }
+        })
+
+    }
+
+</script>
+</html>

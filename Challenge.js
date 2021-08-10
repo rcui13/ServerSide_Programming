@@ -64,9 +64,10 @@ app.post('/challenge4', (req, res) => {
         Schema: "Study",
         Table: "RCui_Challenge4"
     })
+
     con.connect(function (err) {
         if (err) throw err;
-        console.log(req.body);
+        // console.log(Body);
 
         let data = "SELECT Username, Password FROM Study.RCui_Challenge4 WHERE Username = ? AND Password = ?";
         con.query(data, [req.body.username, req.body.password], function (err, results){
@@ -93,6 +94,7 @@ app.post('/challenge5_name',(req, res) => {
         Schema: "Study",
         Table: "RCui_Challenge5"
     })
+    // table = "RCui_Challenge5";
     con.connect(function (err) {
         if (err) throw err;
         let data = "SELECT Name FROM Study.RCui_Challenge5 WHERE Color=?;";
@@ -118,6 +120,7 @@ app.post('/challenge5_img',(req, res) => {
         Schema: "Study",
         Table: "RCui_Challenge5"
     })
+
     con.connect(function (err) {
         if (err) throw err;
         let data = "SELECT ImageURL FROM Study.RCui_Challenge5 WHERE Name=?;";
@@ -133,6 +136,58 @@ app.post('/challenge5_img',(req, res) => {
         })
     })
 })
+
+//challenge 6
+app.post('/challenge6',(req,res) =>{
+    const con = mysql.createConnection({
+        host: host,
+        port: "3306",
+        user: user,
+        password: password,
+        Schema: "Study",
+        Table: "RCui_Challenge6"
+    })
+    let data = "SELECT * FROM Study.RCui_Challenge6";
+    let arr = [];
+    let Body = req.body;
+    con.connect(function (err) {
+        if (err) throw err;
+        console.log(Body)
+        if (Body.country !== '' || Body.yearStart !== 'NaN' || Body.genre !== '') {
+            data += " WHERE";
+        }
+        if (Body.country !== '') {
+        //         data = "SELECT * FROM Study.RCui_Challenge6 WHERE Country=? AND Form_Year >= ? AND Form_Year <= ? AND Genres LIKE ?;";
+            data += " Country= ? ";
+            arr.push(Body.country);
+            if (Body.yearStart !== 'NaN' || Body.genre !== '') {
+                data += " AND";
+            }
+        }
+        if (Body.yearStart !== 'NaN') {
+            data += " Form_Year>= ? AND Form_Year<= ? "
+            arr.push(Body.yearStart, Body.yearEnd);
+            if (Body.genre !== '') {
+                data += " AND";
+            }
+        }
+        if (Body.genre !== '') {
+            data += " Genres LIKE ?;";
+            arr.push(Body.genre);
+        }
+        console.log(data)
+        con.query(data, arr, function(err, results) {
+            if (err) {
+                console.log(err);
+                res.json({"error": true, "message": "An unexpected error occurred !"});
+            } else {
+                res.json({"error": false, "data": results});
+                // console.log(results)
+            }
+        })
+    })
+})
+
 app.listen(port, () => {
     console.log("Example app listening on port " + port + "!")
 });
