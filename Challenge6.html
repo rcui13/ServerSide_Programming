@@ -44,7 +44,7 @@
         </select>
     </div>
     <br>
-    <button type="button" onclick="getData()">Submit</button>
+    <button type="button" onclick="init()" id="submit">Submit</button>
     <br><br>
     <table id="table_id" class="display" style="display:none">
         <thead>
@@ -57,14 +57,7 @@
         </tr>
         </thead>
         <tbody id="data">
-<!--        <tr>-->
-<!--            <td>Row 1 Data 1</td>-->
-<!--            <td>Row 1 Data 2</td>-->
-<!--        </tr>-->
-<!--        <tr>-->
-<!--            <td>Row 2 Data 1</td>-->
-<!--            <td>Row 2 Data 2</td>-->
-<!--        </tr>-->
+
         </tbody>
     </table>
 
@@ -73,23 +66,37 @@
     // $(document).ready( function () {
     //     $('#table_id').DataTable();
     // } );
+    function init () {
+        $("#submit").hide();
+        let btn = document.createElement("BUTTON");
+        $("body").append(btn);
+        btn.innerHTML = "Resubmit";
+        btn.id = "resubmit";
+        btn.addEventListener("click", resubmit);
+
+        getData();
+    }
 
     function getData() {
+
         let country = $("#Country").val(),
             year = $("#range").val(),
             genre = '%' + $("#genre").val() + '%';
 
         let input = [country, year, genre]
-        console.log(input)
+        // console.log(input)
         input.forEach(function (ele, i) {
             if (ele.includes("[")) {
                 input[i] = null;
             }
         })
+        $('#table_id').show();
+        let tbody = $("#data")
+        tbody.empty();
 
-        console.log(input)
+        // console.log(input)
         let data = {country: input[0], yearStart: parseInt(input[1]), yearEnd: parseInt(input[1]) + 9, genre: input[2]};
-        console.log(data)
+        // console.log(data)
         $.ajax({
             url: 'http://localhost:3008/challenge6',
             type: 'POST',
@@ -102,25 +109,35 @@
                 // Object.keys(resp.data[0]).forEach(function(ele, i) {
                 //     $("#columns").append("<th>" + ele + "</th>")
                 // })
-                let tbody = document.getElementById("data");
-                resp.data.forEach( function() {
-                    tbody.append('<tr></tr>')
-                })
-                tbody.childNodes.forEach( function (ele, i) {
-                    resp.data[i].forEach(function (elem, j) {
-                        this.append('<th>' + resp.data[j] + '</th>')
-                    })
-                })
+                // let tbody = document.getElementById("data");
+                resp.data.forEach( function(ele) {
+                    // tbody.append('<tr></tr>');
+                    // $("tr").appendTo(tbody);
+                    let id = (Object.values(ele)[0]).split(' ').join('_');
+                    // console.log(id)
+                    tbody.append($('<tr id="'+ id + '"></tr>'))
+                    // console.log(Object.keys(ele))
+                    for (let j = 0; j < Object.keys(ele).length; j++ ) {
+                        // console.log($("#" + Object.values(ele)[0].split(' ').join('_')))
+                        $("#" + id).append('<th>' + Object.values(ele)[j] + '</th>')
+                    }
 
-
+                })
 
                 $('#table_id')
-                    .show()
                     .DataTable();
 
             }
         })
 
+        // $("#submit").onclick(resubmit());
+
+
+    }
+
+    function resubmit() {
+        $("#table_id").DataTable().clear();
+        getData();
     }
 
 </script>
